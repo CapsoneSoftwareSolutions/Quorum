@@ -53,10 +53,17 @@ Quorum uses the bootstrap as front-end, Django and python technologies as backen
 
 ##### Add request context processor
 
-    TEMPLATE_CONTEXT_PROCESSORS=(
-        ...
-        'django.core.context_processors.request',
+    from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+    TEMPLATE_CONTEXT_PROCESSORS += (
+
+    	......
+
+    	'django.core.context_processors.request',
+    	'django.contrib.messages.context_processors.messages',
+
+    	.....
     )
+
 
 if there isn't any `TEMPLATE_CONTEXT_PROCESSORS` variable in settings.py then import and append it:
 
@@ -128,6 +135,20 @@ Include the `quorum` and `accounts` URLconf in your project `urls.py` like this:
     		),
     	name='haystack_search'),
     )
+
+
+#### HAYSTACK_CONNECTIONS
+
+This setting controls which backends should be available. It should be a dictionary of dictionaries resembling the following..
+
+
+	HAYSTACK_CONNECTIONS = {
+		'default': {
+			'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+			'PATH': os.path.join(dbpath, 'whoosh_index'),
+		},
+	}
+
 
 #### Run the site.
 
