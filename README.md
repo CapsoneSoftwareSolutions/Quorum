@@ -10,3 +10,146 @@ In first phase of release mainly focused only by asking the question and answer 
 Quorum requires users to register with their details to login. Once they registered activation link will send to registered email. User needs to activate the link to login. 
 
 Quorum uses the bootstrap as front-end, Django and python technologies as backend. Ubuntu Link as operating system with SQLlite3 as database.
+
+
+## Quick start
+
+#### Installation 
+
+
+##### Requirements
+
++ Django==1.5.4
++ django-crispy-forms
++ django-haystack
++ Whoosh
+
+
+
+##### Create virtual env and activate it(optional)
+
+    virtualenv --no-site-packages quorumenv
+    source quorumenv/bin/activate
+
+#### Edit `settings.py`
+
+##### Add `crispy_forms`,`quorum`, `registration` to your `INSTALLED_APPS` setting like this::
+
+    INSTALLED_APPS = (
+          ...
+          ...
+        'crispy_forms',
+        'quorum',
+        'registration',
+        'haystack',
+          ...
+          ...        	
+    )
+
+    #crispy template tag settings
+    CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+    LOGIN_REDIRECT_URL = '/quorum/'
+
+##### Add request context processor
+
+    TEMPLATE_CONTEXT_PROCESSORS=(
+        ...
+        'django.core.context_processors.request',
+    )
+
+if there isn't any `TEMPLATE_CONTEXT_PROCESSORS` variable in settings.py then import and append it:
+
+    from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
+
+##### set Database and Staticfiles
+
+    import os
+    PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
+    DEBUG = True
+    TEMPLATE_DEBUG = DEBUG
+
+    dbpath=PROJECT_DIR
+    STATICFILES_DIRS = (os.path.join(PROJECT_DIR,'..','..', 'static'),)
+
+    ........
+
+    DATABASES = {
+    	'default': {
+    		'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+    		'NAME':  os.path.join(dbpath, 'sqlite3.db'), # Or path to database file if using sqlite3.
+    		'USER': '',
+    		'PASSWORD': '',
+    		'HOST': '', # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+    		'PORT': '', # Set to empty string for default.
+    	}
+    }
+
+    .......
+
+    STATIC_ROOT = os.path.join(PROJECT_DIR, '..', 'static')
+
+    
+
+Run the `collectstatic` management command:
+
+    python manage.py collectstatic
+
+This will copy all files from `quorum/static` folders into the `STATIC_ROOT` directory.
+
+
+#### Edit the URLconf
+
+Include the `quorum` and `accounts` URLconf in your project `urls.py` like this::
+    
+    urlpatterns = patterns('',
+    	.............
+    	.............
+
+        url(r'^quorum/', include('quorum.urls')),
+        url(r'^accounts/', include('registration.urls')),
+        url(r'^users/(?P<username>\w+)/$', 'quorum.views.quorumuser'),
+        url(r'^search/', include('haystack.urls')),
+
+        ................
+        ...............
+    )
+
+    from haystack.query import SearchQuerySet
+    sqs = SearchQuerySet()
+    from haystack.views import SearchView, search_view_factory
+    urlpatterns += patterns('haystack.views',
+
+    	url(r'^quorum/search/$', search_view_factory(
+    		view_class=SearchView,
+    		template='quorum/search.html',
+    		searchqueryset=sqs,
+    		),
+    	name='haystack_search'),
+    )
+
+#### Run the site.
+
+`python manage.py syncdb` to create the models. 
+
+Then start the development server(`python manage.py runserver`) and visit http://127.0.0.1:8000/quorum.
+
+
+#### Add sample data
+
+open python console by typing `python manage.py shell`
+
+on console :
+
+    >>> from quorum import sampledata
+    >>> sampledata.initd()
+    >>> exit()
+
+
+## contribute
+
+If you would like to make changes and contribute them back to the project, fork the GitHub project, 
+make your changes, and submit a pull request. This process is beyond the scope of this documentation; 
+for more information, see [GitHub’s documentation](http://help.github.com).
+
