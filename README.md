@@ -33,7 +33,7 @@ Quorum uses the bootstrap as front-end, Django and python technologies as backen
 
 #### Edit `settings.py`
 
-##### Add `crispy_forms`,`quorum`, `registration` to your `INSTALLED_APPS` setting like this::
+##### Add `crispy_forms`,`quorum`, `registration`, `haystack` to your `INSTALLED_APPS` setting like this::
 
     INSTALLED_APPS = (
           ...
