@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+        <legend>Jobs{% if request.user.employer %} Posted by {{ request.user.username }}{% endif %}</legend>
+
+
+<div class="row">
+  <div class="span3">
+    
+
+<!--new change-->
+    <style>
+    .menu {
+    /* dropdown in accordion */ }
+
+    .menu .accordion-heading {
+    position: relative; }
+
+    .menu .emp {
+    border-left: 4px solid #f38787; }
+
+    .menu .loc {
+    border-left: 4px solid #65c465; }
+
+    .menu .exp {
+    border-left: 4px solid #98b3fa; }
+
+    .menu .collapse.in {
+    overflow: visible; }
+    </style>
+    <form method="get" action=".">
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <input type="submit" value="Search">
+            </td>
+        </tr>
+    </table>
+    
+    <h4>Redefine the Search</h4>
+    <div class="menu">
+        <div class="accordion">
+            <div class="accordion-group">
+              <div class="accordion-heading emp">
+                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><!--item 1-->
+                  Employer
+                </a>
+              </div>
+              <div style="height: 0px;" id="collapseOne" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for i in '....' %}
+                  <label class="checkbox">
+                    <input type="checkbox"> Check me out {{ forloop.counter }}
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div><!--/accordion-group-->
+            <div class="accordion-group">
+              <div class="accordion-heading loc">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                  Location
+                </a>
+              </div>
+              <div id="collapseTwo" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for i in '....' %}
+                  <label class="checkbox">
+                    <input type="checkbox"> Check me out {{ forloop.counter }}
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-group">
+              <div class="accordion-heading exp">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                  Experience
+                </a>
+              </div>
+              <div id="collapseThree" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for i in '....' %}
+                  <label class="checkbox">
+                    <input type="checkbox"> Check me out {{ forloop.counter }}
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div><!--/accordion-group-->
+            <div class="accordion-group">
+              <div class="accordion-heading exp">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                  Distance
+                </a>
+              </div>
+              <div id="collapseFour" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for i in '....' %}
+                  <label class="checkbox">
+                    <input type="checkbox"> Check me out {{ forloop.counter }}
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div><!--/accordion-group-->
+            <div class="accordion-group">
+              <div class="accordion-heading exp">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+                  Salary
+                </a>
+              </div>
+              <div id="collapseFive" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for i in '....' %}
+                  <label class="checkbox">
+                    <input type="checkbox"> Check me out {{ forloop.counter }}
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div><!--/accordion-group-->
+
+        </div><!--/accordion-->
+    </div><!--/menu-->
+
+
+
+<!--end ###############################################-->
+
+  </div><!--/span3-->  
+  <div class="span9">
+  {% if query %}
+    {% for result in page.object_list %}
+    <div class="row">
+      <div class="span8">
+        <h4><strong><a href="">{{ result.object.topic }}</a></strong></h4>
+      </div>
+    </div><!--/row-->
+    <div class="row">
+      <div class="span8">              
+        <p>
+          {{ result.object.question|truncatewords:50 }}
+        </p>        
+      </div>
+    </div><!--/row-->
+    <div class="row">
+      <div class="span8">
+        <p>
+          <i class="icon-user"></i> by <a href="">{{ result.object.topic }}</a> 
+          | <i class="icon-calendar"></i> {{ result.object.topic }}          
+          | <i class="icon-share"></i> {{ result.object.topic }} Hits</a>  
+        </p>
+      </div>
+    </div><!--/row-->
+    {% empty %}
+     <p>No results found.</p>
+    {% endfor %}
+
+      {% if page.has_previous or page.has_next %}
+        <div>
+          {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                |
+          {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+        </div>
+      {% endif %}
+    {% else %}
+
+        {# Show some example queries to run, maybe query syntax, something else? #}
+
+    {% endif %}
+ 
+  </div><!--/span9-->
+</div><!--/row-->
+<hr>
+
+</div>
+{% endblock %}

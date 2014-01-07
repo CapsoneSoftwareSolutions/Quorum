@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Quorum{% endblock %}
+{% block header %}
+<style>
+#menu{
+	padding:20px;
+	border-bottom:2px solid #ccc;
+	margin-bottom: 40px;
+}
+.headingtop{
+	font-size:150%;
+}
+#menu a {
+	float:right;}
+.questbox {background: #fff; padding: 20px;}
+</style>
+<div id="menu">
+	<!-- MENU -->
+	<span class="headingtop">Quorum</span>	       
+	{% if user.is_active %}
+	<a class="btn btn-warning" href="/quorum/question/add/">Ask Question</a>
+	<a class="btn btn-warning" href='/quorum/user/{{ request.user.username }}'>Home</a> 
+	{% endif %} 
+	<a class="btn btn-warning" href="/quorum/question/all/">Questions</a>
+	<a class="btn btn-warning" href="/quorum/">Topics</a> 
+	<form method="get" action="/quorum/search/" class="navbar-form form-search"><!--pull-right">-->
+		<input type="text" name="q" id="id_q" required>
+		<input class="btn btn-primary" type="submit" value="Search">
+	</form>    
+</div>
+{% endblock %}

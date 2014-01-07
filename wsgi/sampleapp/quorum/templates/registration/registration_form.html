@@ -1,0 +1,26 @@
+{% extends "registration/registration_base.html" %}
+{% block title %}Register for an account{% endblock %}
+{% block content %}
+<style type="text/css">
+	.errorlist{
+		list-style: none;
+		color: #D9230F;
+	}
+	.form-home{
+        margin-bottom: 13%;
+      }
+</style>
+<div class="container" style="min-height:665px;">
+	<div class="form-home" style="opacity:0.8;margin-top:50px;">
+		<div class="page-header heading"><a href="/quorum/"><h1>Quorum<small>.com</small></h1></a></div>  <h3 style="text-align:center;">Account Registration</h3>
+		<table>
+
+			<form class="form-signin" id="registration_form" action="." method="post">{% csrf_token %}
+			<tr><td colspan="2"><div id="errorlist" class="text text-error text-center"></div></td></tr>
+			{{form}}
+			<tr><td></td><td><input class="btn btn-success" type="submit"  value="Create Account" /></td></tr>
+			</form>
+		</table>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "quorum/base_quorum.html" %}
+{% load q_extras %}
+{% block content %}
+<div class="container" style="min-height:500px;">
+  <!-- Topics  -->
+  <div class="row">
+    <ul class="thumbnails">
+    {% for tp in topics %}    
+      {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"3" %}
+    </ul>
+    <ul class="thumbnails">
+      {% endif %}
+      <li class="span4">
+        <div class="thumbnail">                
+          <a class="thumbnail" style="color:#003366;" href="/quorum/topic/{{ tp.pk }}/">
+          <img src="{{STATIC_URL}}quorum/media/{{ tp.imgurl }}.jpg">
+          </a>             
+          <div class="caption">
+            <h4><a style="color:#003366;" href="/quorum/topic/{{ tp.pk }}/{#{% url quorum.views.questions tp.pk %}#}">{{ tp.topic }}</a></h4>
+            <p><small>{{ tp.pk|question_count }}:Questions</small></p>
+            <p>{{ tp.desc }}</p>
+            {% if request.user.is_active %}                       
+              <p class="followbtns"><button id="{{ tp.pk }}" class="follow btn {{ tp.pk|topic_following:request.user.pk }}">Follow</button></p>           
+            {% endif %}
+          </div>
+        </div>
+      </li><!--/span4-->      
+      {% endfor %}
+    </ul>      
+  </div><!--/row fluid-->
+</div>
+{% endblock %}
+{% block extrajavascript %}
+<!-- the follow btn helper is only used by me-->
+<script src ="{{STATIC_URL}}quorum/js/followbtnhelper.js"></script>
+{% endblock %}

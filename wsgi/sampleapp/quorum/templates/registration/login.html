@@ -1,0 +1,44 @@
+{% extends "registration/registration_base.html" %}
+{% block extraheadfrmreg %}
+<style type="text/css">
+ .form-signin .form-signin-heading{
+    margin-bottom: 10px;    
+  }  
+  .form-signin input[type="text"],
+  .form-signin input[type="password"] {
+    font-size: 16px;
+    height: auto;
+    margin-bottom: 15px;
+    padding: 7px 9px;
+  }
+  .errorlist{
+    list-style: none;
+    color: #D9230F;
+  }
+  .form-home{
+        margin-bottom: 3%;
+      }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height:665px;">
+  <div class="form-home" style="opacity:0.8;margin-top:50px;">
+    <div class="page-header heading"><a href="/quorum/"><h1>Quorum<small>.com</small></h1></a></div>
+  
+  <h3 style="text-align:center;">Login</h3>
+    <form class="form-signin" action="." method="post">{% csrf_token %}
+      <h5 class="form-signin-heading">Sign in to my account...</h5>
+      {{form}}
+      <p style="text-align:right;"><a href="{% url 'auth_password_reset' %}">Forgot</a> your password?</p><button class="btn btn-large btn-success" type="submit" value="login">Sign in</button>
+    </form>
+    <!--
+    <p>Login using any of the following methods</p>
+    <p><a href="/socialauth/login/twitter/">Twitter</a> | Google | <a href="/socialauth/login/linkedin/">Linkedin</a><a href="/socialauth/login/live/">MSN Live</a> | <a href="/socialauth/login/github/">Github</a>  |  <a href="/socialauth/login/facebook/">Facebook</a> | <a href="/socialauth/login/yahoo/">Yahoo</a>
+    </p>
+    -->
+    <h5>Need an account?</h5>
+    <a href="{% url 'registration_register' %}" class="btn">Sign Up</a>
+    </div>
+</div>
+{% endblock %}

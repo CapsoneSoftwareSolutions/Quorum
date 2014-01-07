@@ -1,0 +1,12 @@
+This mail is regarding user feedback from {{domain}} to improve our services.
+
+
+First Name : {{fname}}
+
+Last Name : {{lname}}
+
+Subject : {{subject}}
+
+Email : {{email}}
+
+Message : {{feedback}}

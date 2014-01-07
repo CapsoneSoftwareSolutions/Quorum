@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="min-height:665px;">
+<form class="well span8" action="" id="feedback_form" method="post">{% csrf_token %}
+<div class="row">
+	<div class="span12"><h2>Feedback</h2></div>
+</div><br>
+	    {% if messages %}
+	    {% for message in messages %}
+	  		<div class="row">
+	  			<div class="span7 alert alert-{{ message.tags }}">{{ message }}</div></div>
+	  	{% endfor %}
+	  	{% endif %}
+<div class="row">
+  		<p id="errormsg" style="margin-left:50px;" class="text text-error"></p>
+  		<div class="span3">
+			<label >First Name</label>
+			<input type="text" class="span3" name="firstname" placeholder="Your First Name" required>
+			<label >Last Name</label>
+			<input type="text" class="span3" name="lastname" placeholder="Your Last Name" required>
+			<label >Email Address</label>
+			<input type="text" class="span3" name="email" id="email" placeholder="Your email address" required>
+			<label >Subject</label>
+			<input type="text" class="span3" name="subject" placeholder="Your subject" required>
+		</div>
+		<div class="span5">
+			<label requiredField>Message</label>
+			<textarea name="feedback" id="message" class="input-xlarge span5" rows="10" required></textarea>
+		</div>
+	
+		<button type="submit" id="formsubmit" class="btn btn-primary pull-right">Send</button>
+	</div>
+</form></div>
+{% endblock %}
+{% block extrajavascript %}
+<script>
+$(document).ready(function(){
+	$('#formsubmit').click(function(){
+		$('#errormsg').html('');
+	});
+	$('#feedback_form').submit(function(){
+		var x=$('#email').val();
+		var atpos=x.indexOf("@");
+		var dotpos=x.lastIndexOf(".");
+		if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length){
+			$('#errormsg').html('Enter valid email address');
+			return false;
+		}
+	});
+});
+</script>
+{% endblock %}

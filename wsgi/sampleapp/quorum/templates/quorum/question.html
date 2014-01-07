@@ -1,0 +1,172 @@
+{% extends "quorum/base_quorum.html" %}
+{% block extrahead %}
+<link href="{{STATIC_URL}}quorum/bootstraptoolbar/bootstrap-wysihtml5.css" rel="stylesheet">
+<style type="text/css">
+  .time { font-size: 0.9em; margin-top: 2px; }
+  .body { font-size: 1.2em; margin-top: 2px; }      
+  
+  .comment { border: 1.1px solid #ccc; padding: 4px; margin-bottom: 12px;}  
+  .messages { margin-left: 20px; }
+  .title { font-size: 1.4em; margin-top: 20px; border-bottom: 1px solid #ccc; padding-left: 4px; }
+  #addc { background: #ffcc99; border-bottom: 1px dotted #aaa; padding:20px;} 
+  ul { margin-bottom: 30px; }
+  .comment a{ color:#660000; font-size:1.1em;} 
+  .error {color:red; font-size: 1.5em}  
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container questbox" style="min-height:500px;">
+  <!-- Question  -->
+  <ul>
+    <div class="title">{{ quest.topic.topic }}</div>
+      <div class="row">
+        <div class="span1">
+          <div class="favoritecount">
+            <b class="favoritecount">{{ fav.total }}</b> follows
+            <button class="follow btn {{ fav.btnclass }}" id="{{ quest.pk }}">{{ fav.btntext }}
+            </button>            
+          </div> 
+        </div>
+        <div class="span10">
+          <ul>       
+            <div class="time">{{ quest.created }} | <a href="/quorum/user/{{quest.user}}">{{quest.user}}</a></div>
+            <div class="body">{{ quest.question|safe }}</div>
+          </ul>
+        </div>
+      </div>      
+    
+    <!-- Answers  -->
+    <div style="margin:40px;">
+      {% if ans %}
+          <p>Answers:</p>
+      {% else %}
+        <p> Sorry no answers. Consider adding an answer?</p>
+      {% endif %}
+      {% for answer in ans %}
+          <div class="comment" id="answer{{answer.pk}}">
+              <div class="time">Date: {{ answer.created }} | User: <a href="/quorum/user/{{answer.user}}">{{ answer.user.username }}</a></div>
+              <div class="body">{{ answer.answer|safe|linebreaks }}</div>
+              {% ifequal answer.user.pk user.pk %}
+                  <a class="editquest" href="#div_id_answer" data-ans="{{ answer.answer }}">edit</a> | <a class="deletequest" data-id="{{quest.pk}}" href="#">delete</a>
+              {% endifequal %}
+          </div>
+      {% endfor %}
+      {% if not user.is_active %}
+      <p>You can <a href="/accounts/login/">login</a> to answer this question...</p>
+      {% endif %}
+      {% if user.is_active %}
+      <div class="row">
+        <div class="span9" id="addc">
+          <h4>Add an Answer</h4>
+          <div class="row">
+            <div class="span9">
+              <form action="#" id="answerForm" method="POST">{% csrf_token %}
+                Name: <strong>{{ user.username }}</strong>
+                <div style='display:none'>
+                  <input type='hidden' name='actiontype' id='ActionType' value='add' />
+                </div>
+                <div id="div_id_answer" class="control-group">
+                  <label for="id_answer" class="control-label requiredField">
+                  Answer<span class="asteriskField">*</span>{% if error %}<span class="error">{{ error }}</span>{% endif %}</label>
+                  <div class="controls">
+                    <textarea id="id_answer" rows="10" cols="40" name="answer" class="field span8 textarea"></textarea>
+                  </div>
+                </div>
+                <div class="buttonHolder">
+                  <input type="submit" name="submit" value="Submit" class="btn btn-primary btn-primary pull-right" id="submit-id-submit" />
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <!--</form>-->      
+    </div>
+  </ul>
+</div>
+{% endblock %}
+
+{% block extrajavascript %}
+<script src ="{{STATIC_URL}}quorum/bootstraptoolbar/wysihtml5-0.3.0.js"></script>
+<script src ="{{STATIC_URL}}quorum/bootstraptoolbar/bootstrap-wysihtml5.js"></script>
+
+<script>
+$(document).ready(function()
+{
+  
+  $('.textarea').wysihtml5();
+  
+  $("button.follow").click(function(){
+    $(this).prop("disabled", true);
+    var qid=$(this).attr("id");
+    var params ={param1:qid};
+     $.ajax({ url: "/quorum/question/markfav/",
+              dataType: "json",
+              data: params,           
+              success: setResult      
+      });           
+  });
+   
+  function setResult(data) {
+    // data.updated=(followed,unfollowed, nouser) 
+    if (data.updated=="nouser"){
+      alert("Please login to follow this questions");   
+    }else{
+        var p_opt="b.favoritecount";
+        var nfavs=$(p_opt).text();
+        if (data.updated=='mark') {
+          //$(this).removeClass("btn-");
+          $("button.follow").addClass("btn-primary");
+          $("button.follow").text("UnFollow");           
+          nfavs++;
+        }else if (data.updated=='unmark'){ 
+          //$(this).removeClass("btn-success");
+          $("button.follow").removeClass("btn-primary"); 
+          $("button.follow").text("Follow");
+          nfavs--;               
+        }
+        $(p_opt).text(nfavs);
+        $("button.follow").prop("disabled", false);        
+    }
+  }
+  $("a.deletequest").click(function(){
+    if(confirm("Are you Sure want to delete answer!")) {
+      var str_url="/quorum/question/"+$(this).data('id')+"/";
+      $.ajax({ url: str_url,
+        type: 'POST',
+        dataType: "json",
+        data: {actiontype:'del'},           
+        success: function(e){
+          $('div#answer'+e.ans_pk).remove();
+          alert('successfully deleted.');
+        }      
+      });
+    }   
+  });
+  $("a.editquest").click(function(){
+    var cur_ans=$(this).data('ans');
+    $('.textarea').data("wysihtml5").editor.setValue(cur_ans);
+    //$('textarea#id_answer').html(cur_ans);
+    $('input#ActionType').val('edit');
+    $('.textarea').focus();
+    //document.location.href='/'+href+'/'
+  });
+  /*
+  function validateForm()
+  {
+    alert('what is the problem');
+    var x=$('.textarea').val();//document.forms["myForm"]["fname"].value;
+    alert(x);
+    if (x.length < 10)
+      {
+      alert("Answer Must have atleast 10 chars.");
+      return false;
+      }
+  }*/
+});
+</script>
+{% endblock %}

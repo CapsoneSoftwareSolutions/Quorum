@@ -1,0 +1,20 @@
+{% extends "quorum/base_quorum.html" %}
+{% block extraheadfrmreg %}
+<link href="{{STATIC_URL}}quorum/bootstraptoolbar/bootstrap-wysihtml5.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height:500px;">
+        <div style="padding:50px:">
+        {% load crispy_forms_tags %}
+        {% crispy form %}
+</div>
+</div>
+{% endblock %}
+{% block extrajavascript %}
+<script src ="{{STATIC_URL}}quorum/bootstraptoolbar/wysihtml5-0.3.0.js"></script>
+<script src ="{{STATIC_URL}}quorum/bootstraptoolbar/bootstrap-wysihtml5.js"></script>
+<script>
+$('.textarea').wysihtml5();
+</script>
+{% endblock %}

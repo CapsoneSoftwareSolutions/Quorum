@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="min-height:500px;">
+<h1 id="quorum">Quorum</h1>
+<p>Quorum is a Django question and answer site similar to stackoverflow.  <a href="http://quorum-capsone.rhcloud.com/quorum/">Here is an example website</a></p>
+<h2 id="quick-start">Quick start</h2>
+<h4 id="installation">Installation</h4>
+<h5 id="requirements">Requirements</h5>
+<ul>
+<li>Django</li>
+<li>django-crispy-forms</li>
+<li>django-registration <br />
+</li>
+</ul>
+<h5 id="download-the-quorum">Download the quorum</h5>
+<p><a href="https://github.com/capsone/django-quorum/archive/master.zip">Download the quorum</a> and copy the folder <code>quorum</code> and file <code>requirements.txt</code> into your project directory</p>
+<h5 id="create-virtual-env-and-activate-itoptional">Create virtual env and activate it(optional)</h5>
+<pre><code>virtualenv --no-site-packages quorumenv
+source quorumenv/bin/activate
+</code></pre>
+<h5 id="install-the-requirements">Install the requirements</h5>
+<pre><code>pip install -r requirements.txt
+</code></pre>
+<h4 id="edit-settingspy">Edit <code>settings.py</code></h4>
+<h5 id="add-crispy_formsquorum-registration-to-your-installed_apps-setting-like-this">Add <code>crispy_forms</code>,<code>quorum</code>, <code>registration</code> to your <code>INSTALLED_APPS</code> setting like this::</h5>
+<pre><code>INSTALLED_APPS = (
+      ...
+    'crispy_forms',
+    'quorum',
+    'registration',        
+)
+
+#crispy template tag settings
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+LOGIN_REDIRECT_URL = '/quorum/'
+</code></pre>
+<h5 id="add-request-context-processor">Add request context processor</h5>
+<pre><code>TEMPLATE_CONTEXT_PROCESSORS=(
+    ...
+    'django.core.context_processors.request',
+)
+</code></pre>
+<p>if there isn't any <code>TEMPLATE_CONTEXT_PROCESSORS</code> variable in settings.py then import and append it:</p>
+<pre><code>from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
+</code></pre>
+<h5 id="set-database-and-staticfiles">set Database and Staticfiles</h5>
+<pre><code>import os
+path=os.path.dirname(__file__)
+
+........
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(path,'test.db'),# Or path to database file
+
+.......
+
+STATIC_ROOT = os.path.join(path,'static')
+
+STATICFILES_DIRS = (
+    # ...
+    os.path.join(path,'..',"quorum","static"),
+)
+</code></pre>
+<p>Run the <code>collectstatic</code> management command:</p>
+<pre><code>python manage.py collectstatic
+</code></pre>
+<p>This will copy all files from <code>quorum/static</code> folders into the <code>STATIC_ROOT</code> directory.</p>
+<h4 id="edit-the-urlconf">Edit the URLconf</h4>
+<p>Include the <code>quorum</code> and <code>accounts</code> URLconf in your project <code>urls.py</code> like this::</p>
+<pre><code>urlpatterns = patterns('',
+.....
+    url(r'^quorum/', include('quorum.urls')),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^users/(?P&lt;username&gt;\w+)/$', 'quorum.views.quorumuser'),
+</code></pre>
+<h4 id="run-the-site">Run the site.</h4>
+<p><code>python manage.py syncdb</code> to create the models. </p>
+<p>Then start the development server(<code>python manage.py runserver</code>) and visit http://127.0.0.1:8000/quorum.</p>
+<h4 id="add-sample-data">Add sample data</h4>
+<p>open python console by typing <code>python manage.py shell</code></p>
+<p>on console :</p>
+<pre><code>&gt;&gt;&gt; from quorum import sampledata
+&gt;&gt;&gt; sampledata.initd()
+&gt;&gt;&gt; exit()
+</code></pre>
+<h2 id="contribute">contribute</h2>
+<p>If you would like to make changes and contribute them back to the project, fork the GitHub project, 
+make your changes, and submit a pull request. This process is beyond the scope of this documentation; 
+for more information, see <a href="http://help.github.com">GitHub documentation</a>.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "quorum/base_quorum.html" %}
+{% block extrahead %}
+{% endblock %}
+{% load q_extras %}
+{% block content %}
+<div class="container" style="min-height:500px;">
+	<h1 class="text text-{% if user.username == userview.username %}info{% else %}warning{% endif %}">{{ userview.username|title }}'s profile..</h1>
+<div class="tabbable well" style="margin-bottom: 18px;">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Topics Following</a></li>
+    <li><a href="#tab2" data-toggle="tab">Favourite Questions</a></li>
+    {% if user.is_active %}
+    <li><a href="#tab3" data-toggle="tab">My Account Information</a></li>
+    {% endif %}
+    <li><a href="#tab4" data-toggle="tab">Posted Questions</a></li>
+  </ul>
+  <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
+    <div class="tab-pane active" id="tab1">
+    	<legend class="text text-success">Topics Followings</legend>
+      {% user_following_topics userview.pk %}      
+    </div>
+    <div class="tab-pane" id="tab2">
+      <legend class="text text-success">Favourite Questions</legend>
+      {% user_favourites userview.pk %}    
+    </div>
+     <div class="tab-pane" id="tab4">
+      <legend class="text text-success">Posted Questions</legend>
+      {% user_postedquestions userview.pk %}    
+    </div>
+    {% if user.is_active %}
+    <div class="tab-pane" id="tab3">
+
+      <!--<p>My Account Information.</p>
+      <p class="lead">Username: {{ user.username }}</p>
+      <div class="row">
+
+      	<div class="span6 offset2">
+      		<p>First Name:{{ user.first_name }}</p>
+	      	<p>Last Name :{{ user.last_name }}</p>
+	      	<p>Email     :{{ user.email }}</p>
+	      	<p>Address   :{{ user.address }}</p>
+      	
+      	</div>
+      </div>-->
+      <form class="form-horizontal" id="ajax-form">
+       <fieldset> 
+        <legend class="text text-success">My Account Information</legend>
+        
+        <div class="control-group">
+          <label class="control-label">UserName:</label>
+          <div class="controls">
+          <!--<input type="text" id="username" value="{{ user.username }}" /> <i id ="username"></i><span id="username"></span>!-->
+            <p style="padding-top:5px;">{{userview.username}}</p>
+          </div>
+        </div>
+         <div class="control-group">
+          <label class="control-label">First Name:</label>
+          <div class="controls">
+            {% if user.username == userview.username %}
+            <input type="text" id="first_name" value="{{ user.first_name }}" /> <i id ="first_name"></i><span id="first_name"></span> 
+            {%else%}
+            <p>{{ userview.first_name }}</p>
+            {% endif %}
+          </div>
+        </div>
+         <div class="control-group">
+          <label class="control-label">Last Name:</label>
+          <div class="controls">
+            {% if user.username == userview.username %}
+            <input type="text" id="last_name" value="{{ user.last_name }}" /> <i id ="last_name"></i><span id="last_name"></span>
+            {% else %}
+            <p>{{ userview.last_name }}</p>
+            {% endif %}
+          </div>
+        </div>
+         <div class="control-group">
+          <label class="control-label">Email:</label>
+          <div class="controls">
+            <!-- <input type="text" id="email" value="{{ user.email }}" /> <i id ="email"></i> --><span id="email"></span> 
+            <p style="padding-top:5px;">{{ userview.email }}</p>
+          </div>
+        </div>      
+
+        </fieldset>
+       </form>  
+
+      
+    </div>
+    {% endif %}
+  </div>
+</div> <!-- /tabbable -->
+</div>
+{% endblock %}
+
+{% block extrajavascript %}
+<script>
+$(document).ready(function(){ 
+
+  function setResult(data) {
+    // Alert if update failed
+    var i_opt="i#"+data.fname;
+    var p_opt="span#"+data.fname;
+
+    if (data.updated=='f') {      
+      $(p_opt).text(' Error');
+      $(p_opt).fadeOut().fadeIn();
+      $(i_opt).removeClass("icon-ok"); 
+      $(i_opt).addClass("icon-remove");
+    } // Load output into a P 
+    else { 
+      $(p_opt).text(' Updated');
+      $(p_opt).fadeOut().fadeIn();
+      $(i_opt).removeClass("icon-remove"); 
+      $(i_opt).addClass("icon-ok"); 
+    }
+  }
+
+  $("form#ajax-form").find(":input").change(function(){
+
+    var field_name=$(this).attr("id");
+    var field_val=$(this).val();    
+    var params ={ param1:field_name, param2:field_val };
+
+    $.ajax({ url: "/quorum/contactinfo/save/",
+      dataType: "json",
+      data: params,     
+      success:  setResult     
+    });
+  });
+});
+</script>
+{% endblock %}
